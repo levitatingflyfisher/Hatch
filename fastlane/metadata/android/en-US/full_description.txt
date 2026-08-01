@@ -1,0 +1,26 @@
+The multiplication table is a hatchery, and every fact is a tray of eggs
+your child fills with her own hands — stacking rows, folding to double,
+slicing a row off ten — until the fact hatches into a critter of its own.
+
+Hatch teaches multiplication the way the research says it sticks:
+counting first, then derived-fact strategies (double your 2s to get your 4s;
+take one group off ten to get your 9s), then fast recall — scheduled by
+expanding-interval spaced review, with each child placed at her real starting
+point. The game's moves ARE the mathematics: an incubator tray of eggs is
+literally an array, doubling is literally folding a tray, and rotating one
+into its slot shows why 3×8 and 8×3 are the same fact.
+
+• The Nursery — build each fact as an egg tray, taught wordlessly with the
+  facts your child already owns
+• Hatch Rush — sub-minute speed rounds against her own best run; speed is
+  measured invisibly, never as a countdown
+• The Album — the whole 10×10 table of critters, visible from day one; a
+  sleepy critter shows what wants a visit
+• Habitats — hatched critters, homed her way; export a printable poster to
+  show grandma
+• Up to four children per device, each with her own nest
+
+What Hatch refuses, permanently: ads, purchases, accounts, streaks,
+daily rewards, timers, notifications, and locked-content teasing. This app
+asks for no permissions — not even the internet — so your child's data
+physically cannot leave the device. Free and open source, MIT licensed.

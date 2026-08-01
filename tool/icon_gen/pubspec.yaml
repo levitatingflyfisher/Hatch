@@ -1,0 +1,7 @@
+name: icon_gen
+description: Generates Hatch's launcher/web icons — a pieced quilt block with a kiss-stitch multiplication cross. Code-authored, no image assets.
+publish_to: 'none'
+environment:
+  sdk: '>=3.10.7 <4.0.0'
+dependencies:
+  image: ^4.2.0

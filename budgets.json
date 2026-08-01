@@ -1,0 +1,5 @@
+{
+  "_comment": "Fleet size ratchet (oh_fleet_conformance C3). Baselines measured at v0.1 ship (2026-08-06): main.dart.js gz 1,180,035 B; arm64 split APK 23,036,553 B. Ceilings are baseline+5%.",
+  "main_dart_js_gz_max_bytes": 1240000,
+  "apk_arm64_max_bytes": 24200000
+}

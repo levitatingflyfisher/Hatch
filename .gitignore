@@ -1,0 +1,56 @@
+.worktrees/
+
+# Flutter / Dart standard ignores
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+app.*.symbols
+app.*.map.json
+
+# Android
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Web
+**/web/flutter_service_worker.js
+
+# Generated code
+*.g.dart
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Local working artifacts — do not commit
+# (AGENTS.md is intentionally NOT ignored — it ships as the agent+human guide)
+CLAUDE.md
+GEMINI.md
+docs/superpowers/
+.superpowers/
+test/visual/failures/
+.claude/

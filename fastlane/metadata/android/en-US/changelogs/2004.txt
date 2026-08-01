@@ -1,0 +1,10 @@
+Hatch now says what it is doing.
+
+- A wrong answer names what the tray is showing while it shows it: "Room
+  for more!" or "Too many to fit!"
+- The strategy offer labels every choice before you pick one, instead of
+  after.
+- Hatch Rush says what you are racing: "The shadow is your last rush."
+- New in the parent corner: See how Hatch teaches — every derivation move,
+  every rung of the weaning ladder, and both wrong-answer shapes, playable
+  on demand without waiting weeks to reach them.

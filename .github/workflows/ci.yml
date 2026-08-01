@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone the sibling path-dep packages
+        # Hatch depends on these by sibling path (../... relative to this
+        # checkout), matching the local monorepo layout. Checked out one
+        # level above $GITHUB_WORKSPACE, which is writable — the runner
+        # owns the whole .../work/<repo>/ tree, not just the checkout dir.
+        # sanctuary_backup_ui itself depends on sanctuary_auth_core by the
+        # same sibling path, so both must land under packages/.
+        run: |
+          git clone --depth 1 https://github.com/levitatingflyfisher/sanctuaryAuthCore ../packages/sanctuary_auth_core
+          git clone --depth 1 https://github.com/levitatingflyfisher/sanctuaryBackupUi ../packages/sanctuary_backup_ui
+          git clone --depth 1 https://github.com/levitatingflyfisher/ohStyle ../ohStyle
+          git clone --depth 1 https://github.com/levitatingflyfisher/ohFleetConformance ../packages/oh_fleet_conformance
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.7'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Resolve the engine package's own deps
+        # `flutter analyze` at the app root walks packages/mastery_core too,
+        # including its test/ tree — which imports package:test. The app's
+        # pub get does not resolve a nested package, so without this the
+        # analyzer reports every engine test as undefined_function.
+        working-directory: packages/mastery_core
+        run: dart pub get
+
+      - name: Code generation (Riverpod, Drift)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Engine tests (mastery_core, pure Dart)
+        # The pedagogy engine's ten laws + simulated-learner shipping gate.
+        working-directory: packages/mastery_core
+        run: |
+          dart analyze
+          dart test
+
+      # C3: the gz-JS size budget only bites when build/web exists
+      - name: Build web (C3 budget artifact)
+        run: flutter build web --release
+
+      - name: Patch the service worker
+        # Not optional, and not only for deploys: an unpatched worker cannot
+        # serve the app offline under a sub-path (ADR-0008), and
+        # test/web_service_worker_test.dart fails on any build/web that
+        # skipped this — which is exactly how CI proves the step is real.
+        run: dart run tool/patch_service_worker.dart
+      - name: Test
+        # A real DST timezone, not the runner's UTC: the calendar-day
+        # spacing clock (engine law 2) and its app-side wiring can only be
+        # discriminated from naive Duration math when local midnights
+        # actually shift twice a year.
+        env:
+          TZ: America/Denver
+        run: flutter test

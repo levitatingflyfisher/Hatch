@@ -1,0 +1,16 @@
+name: mastery_core
+description: "Topic-generic math-fact mastery engine: knowledge graph, weaning ladder, expanding-interval spaced retrieval, placement probes, invisible latency automaticity. Pure Dart — no Flutter imports, ever."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.10.7 <4.0.0'
+
+dependencies:
+  clock: ^1.1.1
+  meta: ^1.11.0
+
+dev_dependencies:
+  collection: ^1.18.0
+  test: ^1.25.0
+  lints: ^4.0.0

@@ -1,0 +1,9 @@
+Sound works. Every cue had been silently muted since audio landed — the
+mute flag never reached the player. Plinks, snaps and the hatch chirps
+are all audible now.
+
+Nothing is snatched away any more. A filled tray settles before the
+question arrives, a correct sweep holds for a beat, and a wrong answer
+stops: the tray shows what went short or spilled over, the fact says
+what it is, and it waits for a tap. Stages fade into one another
+instead of cutting.

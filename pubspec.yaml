@@ -1,0 +1,97 @@
+name: hatch
+description: "Hatch — piece your times tables like a quilt. Local-first, no ads, no accounts, no network."
+publish_to: 'none'
+version: 0.1.3+4
+
+environment:
+  sdk: '>=3.10.7 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State & navigation
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+  go_router: ^14.2.7
+
+  # Storage
+  drift: ^2.18.0
+  drift_flutter: ^0.2.2
+  sqlite3_flutter_libs: ^0.5.24
+  shared_preferences: ^2.3.2
+  path_provider: ^2.1.4
+  path: ^1.9.0
+
+  # Utilities
+  clock: ^1.1.1
+  uuid: ^4.4.2
+  intl: ^0.20.2
+  file_picker: ^8.1.0
+
+  # Sound (first-in-fleet audio — see docs/adr/0003; never load-bearing, mute honored from cold start)
+  audioplayers: ^6.1.0
+
+  # Heirloom export (pure-Dart PDF + system share sheet; file-based, zero network)
+  pdf: ^3.11.0
+  share_plus: ^10.1.0
+
+  # The pedagogy engine (pure Dart, no Flutter imports — structurally enforced by its own package)
+  mastery_core:
+    path: packages/mastery_core
+
+  # Fleet siblings
+  openhearth_design:
+    path: ../ohStyle/openhearth_design
+  sanctuary_auth_core:
+    path: ../packages/sanctuary_auth_core
+  sanctuary_backup_ui:
+    path: ../packages/sanctuary_backup_ui
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_goldens:
+    sdk: flutter
+  build_runner: ^2.4.12
+  riverpod_generator: ^2.4.3
+  drift_dev: ^2.18.0
+  mocktail: ^1.0.4
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.1
+  oh_fleet_conformance:
+    path: ../packages/oh_fleet_conformance
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: assets/icon/app_icon.png
+  adaptive_icon_background: "#2C1810"
+  adaptive_icon_foreground: assets/icon/app_icon_foreground.png
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icon/
+    - assets/audio/
+
+  fonts:
+    - family: Lora
+      fonts:
+        - asset: assets/fonts/Lora-Regular.ttf
+        - asset: assets/fonts/Lora-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Lora-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Lora-Bold.ttf
+          weight: 700
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf
+        - asset: assets/fonts/Nunito-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Nunito-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Nunito-Bold.ttf
+          weight: 700

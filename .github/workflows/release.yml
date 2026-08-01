@@ -1,0 +1,127 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: Hatch
+
+      - name: Clone the sibling path-dep packages
+        # Hatch depends on these by sibling path (../... relative to the
+        # Hatch checkout above), matching the local monorepo layout.
+        # They are published as their own public repos; clone them where
+        # pubspec.yaml expects. sanctuary_backup_ui itself depends on
+        # sanctuary_auth_core by the same sibling path, so both must sit
+        # under packages/. ohStyle carries the
+        # openhearth_design tokens; ohFleetConformance is the fleet-standards
+        # test dev-dependency.
+        run: |
+          git clone --depth 1 https://github.com/levitatingflyfisher/sanctuaryAuthCore packages/sanctuary_auth_core
+          git clone --depth 1 https://github.com/levitatingflyfisher/sanctuaryBackupUi packages/sanctuary_backup_ui
+          git clone --depth 1 https://github.com/levitatingflyfisher/ohStyle ohStyle
+          git clone --depth 1 https://github.com/levitatingflyfisher/ohFleetConformance packages/oh_fleet_conformance
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          # Must bundle Dart >= 3.10.7 to satisfy sanctuary_auth_core/
+          # sanctuary_backup_ui's pubspec `environment: sdk`. 3.29.x shipped
+          # an older Dart and fails version resolution.
+          flutter-version: '3.38.7'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        working-directory: Hatch
+        run: flutter pub get
+
+      - name: Generate code
+        working-directory: Hatch
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Engine tests (mastery_core, pure Dart)
+        working-directory: Hatch/packages/mastery_core
+        run: |
+          dart pub get
+          dart test
+
+      - name: Run tests
+        working-directory: Hatch
+        # Exclude golden tests: pixel goldens are environment-specific (font
+        # rasterisation differs on CI runners) and are for local visual review.
+        run: flutter test test/ --exclude-tags golden
+
+  build-and-release:
+    name: Build & Release
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: Hatch
+
+      - name: Clone the sibling path-dep packages
+        run: |
+          git clone --depth 1 https://github.com/levitatingflyfisher/sanctuaryAuthCore packages/sanctuary_auth_core
+          git clone --depth 1 https://github.com/levitatingflyfisher/sanctuaryBackupUi packages/sanctuary_backup_ui
+          git clone --depth 1 https://github.com/levitatingflyfisher/ohStyle ohStyle
+          git clone --depth 1 https://github.com/levitatingflyfisher/ohFleetConformance packages/oh_fleet_conformance
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.7'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        working-directory: Hatch
+        run: flutter pub get
+
+      - name: Generate code
+        working-directory: Hatch
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build split APKs (for direct download)
+        working-directory: Hatch
+        run: flutter build apk --split-per-abi --release
+
+      - name: Build AAB (for Google Play)
+        working-directory: Hatch
+        run: flutter build appbundle --release
+
+      - name: Generate SHA256 checksums
+        working-directory: Hatch/build/app/outputs/flutter-apk
+        run: |
+          for f in *.apk; do
+            sha256sum "$f" > "${f}.sha256"
+          done
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Hatch/build/app/outputs/flutter-apk/*.apk
+            Hatch/build/app/outputs/flutter-apk/*.sha256
+            Hatch/build/app/outputs/bundle/release/*.aab
+          generate_release_notes: true
+          draft: true
