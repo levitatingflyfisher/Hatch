@@ -7,7 +7,13 @@ void main() => runFleetConformance(
     appId: 'hatch',
     // Hatch bundles Lora + Nunito, so there is no web-font fallback to
     // catch a character they cannot draw — C7 sweeps lib/ for any.
-    checks: FleetAppConfig.withBundledFonts,
+    // C8: a bare IconButton.filled paints its glyph the same color as its
+    // own fill under ohStyle's ambient iconTheme — invisible, not just
+    // low-contrast. Filled icon buttons must come from OhIconButton.
+    checks: {
+      ...FleetAppConfig.withBundledFonts,
+      FleetCheck.c8IconButtons,
+    },
     // Tier T: canonical openhearth_design tokens + text ladder; theme
     // construction stays local (signature accent is canonical hearth500,
     // no retyped literals).
