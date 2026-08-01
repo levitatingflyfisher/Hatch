@@ -140,11 +140,26 @@ Future<void> playToDone(
         final spec = controller.current!;
         final answer = answerFor?.call(spec) ?? spec.fact.product;
         if (controller.isChoice(spec)) {
+          // A recognition ask offers a fixed set — distractors plus the true
+          // product — and nothing else is on screen to tap. Callers name the
+          // answer they want by VALUE, and a caller asking for a miss has no
+          // way to know which wrong numbers this event happens to offer, so
+          // an arbitrary wrong value (product + 1) is usually absent and the
+          // tap finds no widget at all. Honour the intent instead of the
+          // literal number: a requested wrong answer that isn't on offer
+          // still means "miss", so land on a wrong option that is.
+          final options = controller.choiceOptions(spec);
+          final tappable = options.contains(answer)
+              ? answer
+              : options.firstWhere(
+                  (o) => o != spec.fact.product,
+                  orElse: () => spec.fact.product,
+                );
           await tester.tap(
             find
                 .descendant(
                   of: find.byType(ChoiceButtons),
-                  matching: find.text('$answer'),
+                  matching: find.text('$tappable'),
                 )
                 .first,
           );
